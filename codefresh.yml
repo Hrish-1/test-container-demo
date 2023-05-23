@@ -1,0 +1,33 @@
+version: "1.0"
+
+stages:
+  - &build-stage build
+    #  - &test-stage test
+
+steps:
+  clone:
+    title: Cloning repository
+    type: git-clone
+    stage: *build-stage
+    repo: Hrish-1/test-containers-demo
+    revision: "${{CF_BRANCH}}"
+    git: github
+
+  build:
+    title: Building app
+    type: build
+    stage: *build-stage
+    working_directory: "${{clone}}"
+    target: compile
+    image_name: test-container-demo
+    tag: "build-${{CF_SHORT_REVISION}}-${{CF_BUILD_TIMESTAMP}}"
+    disable_push: true
+
+      #test:
+      #  title: Running tests
+      #  type: freestyle
+      #  stage: *test-stage
+      #  image: "${{build}}"
+      #  working_directory: "${{clone}}"
+      #  commands:
+      #    - gradle test
